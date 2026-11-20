@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shorts Factory</title>
+<style>
+body {
+  background:#10131c;
+  color:#f4f4f4;
+  font-family:Arial,sans-serif;
+  padding:24px;
+  max-width:800px;
+  margin:auto;
+}
+main {
+  background:#1b2130;
+  padding:24px;
+  border-radius:18px;
+}
+input,select,button,textarea {
+  width:100%;
+  padding:12px;
+  margin:9px 0;
+  border-radius:9px;
+  border:1px solid #41495b;
+  box-sizing:border-box;
+  font-size:16px;
+}
+input,select,textarea {
+  background:#101622;
+  color:white;
+}
+button {
+  background:#6c63ff;
+  color:white;
+  font-weight:bold;
+  border:0;
+  cursor:pointer;
+}
+button:hover {opacity:.85}
+textarea {min-height:200px}
+.small {color:#aab3c5}
+</style>
+</head>
+<body>
+<main>
+<h1>🎬 Shorts Factory</h1>
+<p class="small">Free AI short-form content prompt builder</p>
+
+<label>Topic / niche</label>
+<input id="topic" placeholder="e.g. strange facts about the ocean">
+
+<label>Target audience</label>
+<input id="audience" placeholder="e.g. curious teens and adults">
+
+<label>Video language</label>
+<select id="lang">
+<option>English</option>
+<option>French</option>
+<option>Arabic</option>
+</select>
+
+<label>Video length</label>
+<select id="length">
+<option>30 seconds</option>
+<option>45 seconds</option>
+<option>60 seconds</option>
+</select>
+
+<label>Style</label>
+<select id="style">
+<option>Faceless documentary</option>
+<option>Fast-paced facts</option>
+<option>Storytelling</option>
+<option>Motivational</option>
+<option>Mysterious</option>
+</select>
+
+<button onclick="buildPrompt()">Generate content prompt</button>
+
+<label>Your ready-to-copy AI prompt</label>
+<textarea id="output" placeholder="Your prompt will appear here..."></textarea>
+
+<button onclick="copyPrompt()">Copy prompt</button>
+<button onclick="openChatGPT()">Open ChatGPT</button>
+
+<p id="status" class="small"></p>
+</main>
+
+<script>
+function buildPrompt() {
+  const topic = document.getElementById('topic').value.trim();
+  const audience = document.getElementById('audience').value.trim() || 'general audience';
+  const lang = document.getElementById('lang').value;
+  const length = document.getElementById('length').value;
+  const style = document.getElementById('style').value;
+
+  if (!topic) {
+    document.getElementById('status').textContent = 'Enter a topic first!';
+    return;
+  }
+
+  const prompt = `Act as an expert short-form video creator.
+
+Create an original ${length} vertical video for Instagram Reels and YouTube Shorts.
+
+TOPIC: ${topic}
+AUDIENCE: ${audience}
+LANGUAGE: ${lang}
+STYLE: ${style}
+
+Return:
+1. Three possible hooks
+2. The strongest hook selected
+3. A complete voiceover script timed for ${length}
+4. A scene-by-scene storyboard
+5. Visual generation prompts for each scene
+6. On-screen subtitles
+7. Editing instructions
+8. A YouTube Shorts title
+9. An Instagram caption
+10. Relevant hashtags
+11. A factual and copyright quality-check list
+
+Keep it engaging, original, accurate, and suitable for vertical 9:16 video.
+Do not invent facts. Flag claims that need verification.
+Do not claim a video has been generated or posted.`;
+
+  document.getElementById('output').value = prompt;
+  document.getElementById('status').textContent = 'Prompt ready! Copy it into ChatGPT.';
+}
+
+function copyPrompt() {
+  const text = document.getElementById('output').value;
+  if (!text) {
+    document.getElementById('status').textContent = 'Generate a prompt first.';
+    return;
+  }
+  navigator.clipboard.writeText(text)
+    .then(() => document.getElementById('status').textContent = 'Copied! Now paste it into ChatGPT.')
+    .catch(() => document.getElementById('status').textContent = 'Select the text and copy it manually.');
+}
+
+function openChatGPT() {
+  window.open('https://chatgpt.com', '_blank');
+}
+</script>
+</body>
+</html>
