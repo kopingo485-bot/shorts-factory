@@ -3,534 +3,347 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Shorts Factory</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shorts Factory — Creator Studio</title>
 <style>
-:root{
-  --bg:#090b14;
-  --panel:#141a2b;
-  --panel2:#1b2338;
-  --text:#f4f7ff;
-  --muted:#98a4bf;
-  --purple:#8172ff;
-  --cyan:#49d9ff;
-  --border:rgba(255,255,255,.09);
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg:#080a10; --panel:#10131d; --panel2:#141925; --line:#232a3a;
+  --text:#edf1ff; --muted:#8992a9; --purple:#8b5cf6; --cyan:#45d9ff;
+  --green:#4ade80; --red:#fb7185; --orange:#fbbf24;
 }
-*{box-sizing:border-box}
-body{
-  margin:0;
-  padding:32px 16px;
-  min-height:100vh;
-  color:var(--text);
-  font-family:Inter,Segoe UI,Arial,sans-serif;
-  background:
-    radial-gradient(ellipse at 15% 15%,rgba(111,83,255,.16),transparent 45%),
-    radial-gradient(ellipse at 85% 80%,rgba(0,210,255,.10),transparent 40%),
-    var(--bg);
-  overflow-x:hidden;
+* {box-sizing:border-box}
+body {
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:'DM Sans',sans-serif; min-height:100vh; overflow-x:hidden;
 }
-#particles{
-  position:fixed;
-  inset:0;
-  overflow:hidden;
-  pointer-events:none;
-  z-index:0;
+body:before {
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:radial-gradient(ellipse at 15% 5%,#542a9233,transparent 42%),
+             radial-gradient(ellipse at 90% 80%,#0b94b522,transparent 42%);
 }
-.particle{
-  position:absolute;
-  width:3px;height:3px;
-  border-radius:50%;
-  background:#a59bff;
-  opacity:0;
-  animation:float 12s infinite linear;
-  box-shadow:0 0 12px #8976ff;
+button,input,select,textarea {font:inherit}
+button {cursor:pointer}
+.layout {display:flex;min-height:100vh}
+.sidebar {
+  width:245px; position:fixed; inset:0 auto 0 0; padding:25px 17px;
+  border-right:1px solid var(--line); background:#0a0c13ee; backdrop-filter:blur(20px);
+  display:flex; flex-direction:column; z-index:10;
 }
-@keyframes float{
-  0%{transform:translateY(110vh) translateX(0);opacity:0}
-  10%{opacity:.6}
-  90%{opacity:.4}
-  100%{transform:translateY(-10vh) translateX(60px);opacity:0}
+.brand {display:flex;align-items:center;gap:11px;padding:3px 10px 29px}
+.logo {
+  width:38px;height:38px;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--purple),#5140d6);font-size:20px;
+  box-shadow:0 0 25px #8b5cf644
 }
-.container{
-  position:relative;
-  z-index:1;
-  max-width:1000px;
-  margin:auto;
+.brand-name {font-family:'Space Grotesk';font-size:18px;font-weight:700;letter-spacing:-.5px}
+.brand-name span {color:var(--purple)}
+.nav-label {font-size:10px;color:#626b80;letter-spacing:1.8px;font-weight:700;padding:12px 12px}
+.nav-btn {
+  display:flex;align-items:center;gap:12px;border:0;background:transparent;color:#939db2;
+  padding:12px;border-radius:10px;width:100%;text-align:left;margin:3px 0;
+  transition:.25s;font-size:14px
 }
-header{
-  text-align:center;
-  padding:24px 10px 30px;
-  animation:fadeDown .8s ease both;
+.nav-btn:hover {background:#171c29;color:white;transform:translateX(3px)}
+.nav-btn.active {color:white;background:linear-gradient(90deg,#8b5cf625,#8b5cf609);border:1px solid #8b5cf63b}
+.nav-btn.active .nav-icon {color:#b49aff}
+.nav-icon {font-size:17px;width:22px;text-align:center}
+.sidebar-bottom {margin-top:auto;border:1px solid var(--line);border-radius:14px;padding:15px;background:linear-gradient(145deg,#171a27,#10131b)}
+.sb-title {font-size:12px;font-weight:700;margin-bottom:6px}
+.sb-text {font-size:11px;color:var(--muted);line-height:1.6}
+.sb-pill {display:inline-block;margin-top:10px;padding:5px 8px;border-radius:20px;background:#8b5cf61c;color:#b49aff;font-size:10px}
+.main {margin-left:245px;width:calc(100% - 245px);padding:32px 42px 70px}
+.topbar {display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
+.breadcrumb {color:var(--muted);font-size:12px}
+.breadcrumb b {color:#e4e8f3;font-weight:500}
+.status {font-size:11px;color:#a3e8bf;background:#173323;border:1px solid #285d3a;padding:7px 11px;border-radius:20px}
+.status i {display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);margin-right:6px;box-shadow:0 0 8px #4ade80}
+.page {display:none;animation:appear .35s ease}
+.page.active {display:block}
+@keyframes appear {from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.hero {display:flex;align-items:center;justify-content:space-between;margin-bottom:27px}
+.eyebrow {color:#a68aff;font-size:11px;font-weight:700;letter-spacing:1.5px;margin-bottom:10px}
+h1 {font-family:'Space Grotesk';font-size:30px;letter-spacing:-1.2px;margin:0}
+.subtitle {color:var(--muted);font-size:13px;margin-top:9px}
+.hero-orb {width:90px;height:90px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#b4a1ff,#7441d0 40%,#18202e 72%);box-shadow:0 0 45px #8b5cf625;position:relative;animation:float 4s ease-in-out infinite}
+.hero-orb:after {content:"✦";position:absolute;inset:0;display:grid;place-items:center;font-size:25px;color:#fff}
+@keyframes float {0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.stats {display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:23px}
+.stat {border:1px solid var(--line);background:linear-gradient(140deg,#131724,#0f121a);border-radius:15px;padding:17px}
+.stat-top {display:flex;justify-content:space-between;color:var(--muted);font-size:11px}
+.stat-num {font-family:'Space Grotesk';font-size:25px;font-weight:700;margin-top:10px}
+.stat-foot {font-size:10px;color:#7e899f;margin-top:4px}
+.card {background:linear-gradient(145deg,#111520,#0e1119);border:1px solid var(--line);border-radius:17px;padding:22px;margin-bottom:17px}
+.card-title {font-family:'Space Grotesk';font-size:16px;font-weight:600}
+.card-desc {font-size:12px;color:var(--muted);margin-top:5px}
+.generator-grid {display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:21px}
+.field {margin-bottom:14px}
+.field label {display:block;color:#a5aec2;font-size:11px;margin-bottom:8px}
+.field input,.field select,.field textarea {
+  width:100%;background:#0a0d14;border:1px solid #272e3d;border-radius:10px;color:white;
+  padding:12px;outline:none;font-size:13px;transition:.2s
 }
-.logo{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  width:65px;height:65px;
-  border-radius:20px;
-  font-size:30px;
-  background:linear-gradient(135deg,#7665ff,#23c8ff);
-  box-shadow:0 0 35px rgba(113,95,255,.35);
-  animation:pulse 3s infinite;
+.field input:focus,.field select:focus,.field textarea:focus {border-color:#8b5cf6;box-shadow:0 0 0 3px #8b5cf619}
+.field textarea {resize:vertical;min-height:100px;line-height:1.6}
+.btn {
+  border:1px solid #30384a;background:#171c28;color:#e6eaff;border-radius:10px;
+  padding:11px 15px;font-size:12px;font-weight:600;transition:.2s
 }
-h1{
-  margin:16px 0 8px;
-  font-size:clamp(28px,5vw,42px);
-  letter-spacing:-1px;
+.btn:hover {transform:translateY(-1px);border-color:#64718b}
+.btn-primary {background:linear-gradient(110deg,#7951dd,#9b65f7);border:0;color:white;box-shadow:0 5px 20px #8b5cf626}
+.btn-primary:hover {filter:brightness(1.13);box-shadow:0 5px 28px #8b5cf64a}
+.btn-small {padding:7px 10px;font-size:11px}
+.actions {display:flex;gap:9px;flex-wrap:wrap}
+.output {margin-top:19px;display:none}
+.output.show {display:block;animation:appear .3s}
+.output-section {padding:15px;border:1px solid var(--line);background:#0b0e16;border-radius:12px;margin-bottom:10px}
+.output-section h3 {font-size:11px;color:#a78bfa;letter-spacing:1px;margin:0 0 10px}
+.output-section p {font-size:13px;line-height:1.7;color:#d7dced;margin:0;white-space:pre-wrap}
+.output-section .copy {margin-top:10px}
+.empty {text-align:center;padding:36px 20px;color:var(--muted);font-size:13px}
+.empty-icon {font-size:30px;margin-bottom:10px}
+.items {display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.item {background:#0b0e16;border:1px solid var(--line);border-radius:12px;padding:16px}
+.item h3 {font-size:14px;margin:0 0 8px}
+.item p {font-size:12px;color:var(--muted);line-height:1.6}
+.item-actions {display:flex;gap:7px;margin-top:12px}
+.checklist {margin-top:20px}
+.check-row {display:flex;align-items:flex-start;gap:11px;padding:14px 0;border-bottom:1px solid #202636;font-size:13px}
+.check-row:last-child {border-bottom:0}
+.check-row input {accent-color:#8b5cf6;margin-top:2px}
+.check-row small {display:block;color:var(--muted);margin-top:4px;font-size:11px}
+.progress {height:5px;background:#222838;border-radius:9px;margin:17px 0;overflow:hidden}
+.progress div {height:100%;width:0;background:linear-gradient(90deg,#8b5cf6,#45d9ff);transition:.3s}
+.progress-label {font-size:11px;color:var(--muted);display:flex;justify-content:space-between}
+.platform-tabs {display:flex;gap:8px;margin:17px 0}
+.platform {padding:9px 13px;border:1px solid var(--line);border-radius:9px;background:#0c1018;color:#9ba5ba;font-size:12px}
+.platform.active {color:white;border-color:#8b5cf6;background:#8b5cf61b}
+.toast {position:fixed;bottom:25px;right:25px;background:#1c2330;border:1px solid #343c4f;padding:12px 17px;border-radius:12px;font-size:12px;z-index:99;opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none}
+.toast.show {opacity:1;transform:translateY(0)}
+.mobile-menu {display:none}
+footer {text-align:center;color:#4f586b;font-size:10px;padding:30px}
+@media(max-width:1000px) {
+ .main{padding:27px 25px;margin-left:220px;width:calc(100% - 220px)}
+ .sidebar{width:220px}
 }
-.gradient-text{
-  background:linear-gradient(90deg,#a49aff,#48ddff,#a49aff);
-  background-size:200%;
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-  animation:gradient 5s linear infinite;
-}
-.subtitle{color:var(--muted)}
-@keyframes gradient{to{background-position:200%}}
-@keyframes pulse{
-  0%,100%{box-shadow:0 0 25px rgba(113,95,255,.25)}
-  50%{box-shadow:0 0 45px rgba(45,205,255,.45)}
-}
-@keyframes fadeDown{
-  from{opacity:0;transform:translateY(-20px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.workspace{
-  background:rgba(20,26,43,.88);
-  backdrop-filter:blur(18px);
-  border:1px solid var(--border);
-  border-radius:24px;
-  box-shadow:0 25px 80px rgba(0,0,0,.35);
-  padding:22px;
-  animation:appear .7s ease both;
-}
-@keyframes appear{
-  from{opacity:0;transform:translateY(25px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.tabs{
-  display:flex;
-  gap:10px;
-  padding:6px;
-  border:1px solid var(--border);
-  background:#0d1120;
-  border-radius:15px;
-  margin-bottom:20px;
-}
-.tabs button{
-  flex:1;
-  border:0;
-  background:transparent;
-  color:var(--muted);
-  padding:13px 10px;
-  border-radius:11px;
-  cursor:pointer;
-  transition:.25s;
-  font-weight:600;
-}
-.tabs button:hover{color:white;background:#202941}
-.tabs button.active{
-  color:white;
-  background:linear-gradient(120deg,#7061f8,#4c9dff);
-  box-shadow:0 5px 20px rgba(103,94,255,.25);
-}
-.panel{
-  display:none;
-  animation:tabIn .35s ease;
-}
-.panel.active{display:block}
-@keyframes tabIn{
-  from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:translateY(0)}
-}
-.card{
-  background:linear-gradient(145deg,rgba(28,36,57,.9),rgba(17,22,36,.95));
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:22px;
-  margin-bottom:16px;
-  transition:border-color .25s,transform .25s;
-}
-.card:hover{
-  border-color:rgba(129,114,255,.4);
-}
-h2{margin-top:0;font-size:21px}
-h3{font-size:17px}
-label{
-  display:block;
-  color:#c8d2e8;
-  font-size:14px;
-  margin:16px 0 7px;
-}
-input,select,textarea{
-  width:100%;
-  background:#0c1120;
-  color:white;
-  border:1px solid #313c56;
-  border-radius:11px;
-  padding:13px 14px;
-  font:inherit;
-  outline:none;
-  transition:.2s;
-}
-input:focus,select:focus,textarea:focus{
-  border-color:var(--purple);
-  box-shadow:0 0 0 3px rgba(129,114,255,.13);
-}
-textarea{
-  min-height:210px;
-  resize:vertical;
-  line-height:1.6;
-}
-button.action{
-  width:100%;
-  border:0;
-  border-radius:11px;
-  padding:14px;
-  color:white;
-  font-weight:700;
-  background:linear-gradient(110deg,#7161f9,#469dff);
-  cursor:pointer;
-  margin-top:12px;
-  transition:transform .2s,filter .2s,box-shadow .2s;
-}
-button.action:hover{
-  transform:translateY(-2px);
-  filter:brightness(1.12);
-  box-shadow:0 8px 25px rgba(96,100,255,.25);
-}
-button.action:active{transform:scale(.98)}
-button.secondary{
-  background:#252e47;
-  border:1px solid var(--border);
-}
-.status{
-  text-align:center;
-  color:#70e1ff;
-  min-height:24px;
-  margin:16px 0 0;
-  font-size:14px;
-}
-.checklist{
-  display:grid;
-  gap:12px;
-}
-.check{
-  display:flex;
-  gap:12px;
-  align-items:center;
-  background:#0d1322;
-  border:1px solid var(--border);
-  padding:14px;
-  border-radius:12px;
-  transition:.2s;
-}
-.check:has(input:checked){
-  border-color:#42d6a2;
-  background:rgba(39,180,124,.07);
-}
-.check input{
-  width:18px;height:18px;
-  accent-color:#46d7a2;
-}
-.check label{
-  margin:0;
-  cursor:pointer;
-  flex:1;
-}
-.progress-wrap{
-  height:6px;
-  border-radius:10px;
-  background:#0a0e19;
-  overflow:hidden;
-  margin:16px 0 6px;
-}
-.progress-bar{
-  height:100%;
-  width:0;
-  background:linear-gradient(90deg,#7a66ff,#3edbff);
-  border-radius:10px;
-  transition:width .35s ease;
-}
-.footer{
-  text-align:center;
-  color:#66728f;
-  padding:20px;
-  font-size:12px;
-}
-@media(max-width:600px){
-  body{padding:16px 10px}
-  .workspace{padding:12px;border-radius:18px}
-  .card{padding:16px}
-  .tabs button{font-size:12px;padding:12px 4px}
+@media(max-width:720px) {
+ .sidebar{width:70px;padding:17px 8px}
+ .brand{justify-content:center;padding:5px 0 23px}
+ .brand-name,.nav-label,.nav-btn .nav-text,.sidebar-bottom{display:none}
+ .nav-btn{justify-content:center;padding:13px 5px}
+ .nav-icon{width:auto}
+ .main{margin-left:70px;width:calc(100% - 70px);padding:20px 13px}
+ h1{font-size:25px}
+ .hero-orb{width:58px;height:58px}
+ .stats{gap:8px}
+ .stat{padding:12px}
+ .stat-num{font-size:20px}
+ .stat-foot{font-size:9px}
+ .generator-grid,.items{grid-template-columns:1fr}
+ .card{padding:16px}
 }
 </style>
 </head>
-
 <body>
-<div id="particles"></div>
+<div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">✦</div><div class="brand-name">Shorts <span>Factory</span></div></div>
+  <div class="nav-label">WORKSPACE</div>
+  <button class="nav-btn active" data-page="create"><span class="nav-icon">✧</span><span class="nav-text">Create Studio</span></button>
+  <button class="nav-btn" data-page="verify"><span class="nav-icon">⌕</span><span class="nav-text">Verify Content</span></button>
+  <button class="nav-btn" data-page="vault"><span class="nav-icon">▣</span><span class="nav-text">Content Vault</span></button>
+  <button class="nav-btn" data-page="publish"><span class="nav-icon">↗</span><span class="nav-text">Publish Center</span></button>
+  <div class="nav-label">YOUR STUDIO</div>
+  <button class="nav-btn" data-page="create"><span class="nav-icon">⚙</span><span class="nav-text">Creator Workspace</span></button>
+  <div class="sidebar-bottom">
+    <div class="sb-title">Your creative space</div>
+    <div class="sb-text">Ideas become stories. Stories become videos. Keep creating.</div>
+    <div class="sb-pill">✦ CREATOR MODE</div>
+  </div>
+</aside>
 
-<div class="container">
-<header>
-  <div class="logo">🎬</div>
-  <h1><span class="gradient-text">Shorts Factory</span></h1>
-  <p class="subtitle">Your AI-powered short-form content studio</p>
-</header>
-
-<div class="workspace">
-  <div class="tabs">
-    <button class="active" onclick="showTab('create',this)">✦ Create</button>
-    <button onclick="showTab('verify',this)">⌕ Verify</button>
-    <button onclick="showTab('publish',this)">↗ Publish</button>
+<main class="main">
+  <div class="topbar">
+    <div class="breadcrumb">Workspace / <b id="crumb">Create Studio</b></div>
+    <div class="status"><i></i> Studio ready</div>
   </div>
 
-  <!-- CREATE -->
-  <section id="create" class="panel active">
-    <div class="card">
-      <h2>✦ Create a video</h2>
-      <p class="subtitle">Turn a topic into a complete short-form production plan.</p>
-
-      <label>Topic / niche</label>
-      <input id="topic" placeholder="e.g. 5 mysterious facts about the ocean">
-
-      <label>Target audience</label>
-      <input id="audience" placeholder="e.g. curious people aged 16–30">
-
-      <label>Language</label>
-      <select id="lang">
-        <option>English</option>
-        <option>French</option>
-        <option>Arabic</option>
-      </select>
-
-      <label>Video length</label>
-      <select id="length">
-        <option>30 seconds</option>
-        <option>45 seconds</option>
-        <option>60 seconds</option>
-      </select>
-
-      <label>Style</label>
-      <select id="style">
-        <option>Faceless documentary</option>
-        <option>Mysterious cinematic</option>
-        <option>Fast-paced facts</option>
-        <option>Storytelling</option>
-        <option>Motivational</option>
-      </select>
-
-      <button class="action" onclick="createPrompt()">⚡ Generate production prompt</button>
+  <!-- CREATE PAGE -->
+  <section class="page active" id="create">
+    <div class="hero">
+      <div><div class="eyebrow">✦ YOUR AI CREATIVE WORKSPACE</div><h1>Make something <span style="color:#a58bff">unforgettable.</span></h1><div class="subtitle">Your all-in-one studio for scroll-stopping short videos.</div></div>
+      <div class="hero-orb"></div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-top">Saved projects <span>▣</span></div><div class="stat-num" id="stat-projects">0</div><div class="stat-foot">In your personal vault</div></div>
+      <div class="stat"><div class="stat-top">Scripts created <span>✎</span></div><div class="stat-num" id="stat-scripts">0</div><div class="stat-foot">This browser session</div></div>
+      <div class="stat"><div class="stat-top">Publishing tasks <span>↗</span></div><div class="stat-num" id="stat-tasks">0%</div><div class="stat-foot">Checklist completion</div></div>
     </div>
 
     <div class="card">
-      <h3>Your production prompt</h3>
-      <textarea id="createOutput" placeholder="Your generated prompt will appear here..."></textarea>
-      <button class="action" onclick="copyText('createOutput')">📋 Copy prompt</button>
-      <button class="action secondary" onclick="openChat()">Open ChatGPT ↗</button>
-    </div>
-  </section>
-
-  <!-- VERIFY -->
-  <section id="verify" class="panel">
-    <div class="card">
-      <h2>⌕ Quality control</h2>
-      <p class="subtitle">Inspect your script before you spend time editing the video.</p>
-
-      <label>Paste your script or video description</label>
-      <textarea id="reviewInput" placeholder="Paste your script, captions, scene descriptions, or notes here..."></textarea>
-      <button class="action" onclick="verifyPrompt()">🔎 Generate review prompt</button>
-    </div>
-
-    <div class="card">
-      <h3>Review prompt</h3>
-      <textarea id="verifyOutput" placeholder="Your quality-control prompt appears here..."></textarea>
-      <button class="action" onclick="copyText('verifyOutput')">📋 Copy review prompt</button>
-      <button class="action secondary" onclick="openChat()">Open ChatGPT ↗</button>
-    </div>
-  </section>
-
-  <!-- PUBLISH -->
-  <section id="publish" class="panel">
-    <div class="card">
-      <h2>↗ Publishing checklist</h2>
-      <p class="subtitle">Review every item before publishing.</p>
-
-      <div class="progress-wrap"><div id="progress" class="progress-bar"></div></div>
-      <p id="progressText" class="subtitle">0 of 9 complete</p>
-
-      <div class="checklist">
-        <div class="check"><input type="checkbox" id="c1" onchange="updateProgress()"><label for="c1">Video is vertical (9:16)</label></div>
-        <div class="check"><input type="checkbox" id="c2" onchange="updateProgress()"><label for="c2">Duration is correct</label></div>
-        <div class="check"><input type="checkbox" id="c3" onchange="updateProgress()"><label for="c3">Spelling and subtitles checked</label></div>
-        <div class="check"><input type="checkbox" id="c4" onchange="updateProgress()"><label for="c4">Facts verified from reliable sources</label></div>
-        <div class="check"><input type="checkbox" id="c5" onchange="updateProgress()"><label for="c5">Visuals and music usage rights reviewed</label></div>
-        <div class="check"><input type="checkbox" id="c6" onchange="updateProgress()"><label for="c6">Audio levels and voiceover checked</label></div>
-        <div class="check"><input type="checkbox" id="c7" onchange="updateProgress()"><label for="c7">Title, caption, and hashtags prepared</label></div>
-        <div class="check"><input type="checkbox" id="c8" onchange="updateProgress()"><label for="c8">Watched the final video all the way through</label></div>
-        <div class="check"><input type="checkbox" id="c9" onchange="updateProgress()"><label for="c9">Final video approved</label></div>
+      <div class="card-title">✧ Create your next Short</div>
+      <div class="card-desc">Fill in your direction. Your creative package will be generated instantly.</div>
+      <div class="generator-grid">
+        <div class="field"><label>VIDEO TOPIC</label><input id="topic" placeholder="e.g. 5 mysteries of the ocean"></div>
+        <div class="field"><label>VIDEO STYLE</label><select id="style"><option>Faceless documentary</option><option>Fast facts</option><option>Motivational</option><option>Storytelling</option><option>Funny / entertaining</option><option>Mysterious</option></select></div>
+        <div class="field"><label>VIDEO LENGTH</label><select id="length"><option value="30">30 seconds</option><option value="45">45 seconds</option><option value="60">60 seconds</option></select></div>
+        <div class="field"><label>PLATFORM</label><select id="platform"><option>YouTube Shorts</option><option>Instagram Reels</option><option>Both platforms</option><option>TikTok</option></select></div>
       </div>
-
-      <button class="action secondary" onclick="resetChecklist()">Reset checklist</button>
+      <div class="actions"><button class="btn btn-primary" id="generate">✦ Generate content package</button><button class="btn" id="clear-form">Reset</button></div>
+      <div class="output" id="output"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Your creative flow</div>
+      <div class="card-desc">From a simple idea to a published video in four steps.</div>
+      <div class="items" style="margin-top:18px">
+        <div class="item"><h3>✧ 01 — Create</h3><p>Develop your topic, hook, voiceover, storyboard and captions.</p></div>
+        <div class="item"><h3>⌕ 02 — Verify</h3><p>Review your content, claims, visuals and audio before publishing.</p></div>
+        <div class="item"><h3>▣ 03 — Save</h3><p>Keep your ideas and generated scripts in your private browser vault.</p></div>
+        <div class="item"><h3>↗ 04 — Publish</h3><p>Use a simple checklist to prepare your Short for upload.</p></div>
+      </div>
     </div>
   </section>
 
-  <p id="status" class="status"></p>
-</div>
+  <!-- VERIFY PAGE -->
+  <section class="page" id="verify">
+    <div class="hero"><div><div class="eyebrow">QUALITY CONTROL</div><h1>Verify your content.</h1><div class="subtitle">Check your Short before it reaches your audience.</div></div></div>
+    <div class="card">
+      <div class="card-title">Pre-publishing review</div><div class="card-desc">Mark each item after checking your video.</div>
+      <div class="progress"><div id="verify-bar"></div></div><div class="progress-label"><span>Review progress</span><span id="verify-percent">0%</span></div>
+      <div class="checklist" id="verify-list">
+        <label class="check-row"><input type="checkbox" class="verify-check"><div><b>Hook is compelling</b><small>First 1–3 seconds make viewers want to stay.</small></div></label>
+        <label class="check-row"><input type="checkbox" class="verify-check"><div><b>Facts are verified</b><small>Check statistics, dates, names and factual claims against reliable sources.</small></div></label>
+        <label class="check-row"><input type="checkbox" class="verify-check"><div><b>Voiceover sounds clear</b><small>Audio is easy to understand and well-paced.</small></div></label>
+        <label class="check-row"><input type="checkbox" class="verify-check"><div><b>Visuals match narration</b><small>Scenes are relevant, high-quality and timed properly.</small></div></label>
+        <label class="check-row"><input type="checkbox" class="verify-check"><div><b>Captions are correct</b><small>Spelling, punctuation and timing have been checked.</small></div></label>
+        <label class="check-row"><input type="checkbox" class="verify-check"><div><b>Music and media are cleared</b><small>Confirm permissions and platform usage rights.</small></div></label>
+        <label class="check-row"><input type="checkbox" class="verify-check"><div><b>Call to action is included</b><small>Give viewers a reason to comment, follow or share.</small></div></label>
+      </div>
+    </div>
+  </section>
 
-<div class="footer">SHORTS FACTORY · CREATIVE WORKSPACE</div>
-</div>
+  <!-- VAULT PAGE -->
+  <section class="page" id="vault">
+    <div class="hero"><div><div class="eyebrow">YOUR LIBRARY</div><h1>Content Vault.</h1><div class="subtitle">All the projects you choose to save, in one place.</div></div></div>
+    <div class="card"><div class="card-title">Saved projects <span style="color:#9a7aff" id="vault-count">0</span></div><div class="card-desc">Projects are stored in this browser on this device.</div><div id="vault-list" class="items" style="margin-top:18px"></div></div>
+  </section>
 
+  <!-- PUBLISH PAGE -->
+  <section class="page" id="publish">
+    <div class="hero"><div><div class="eyebrow">READY FOR TAKEOFF</div><h1>Publish Center.</h1><div class="subtitle">A final checklist for your next upload.</div></div></div>
+    <div class="card">
+      <div class="card-title">Publishing checklist</div><div class="card-desc">Choose your platform and check off each task.</div>
+      <div class="platform-tabs"><button class="platform active" data-platform="youtube">▶ YouTube Shorts</button><button class="platform" data-platform="instagram">◎ Instagram Reels</button></div>
+      <div class="progress"><div id="pub-bar"></div></div><div class="progress-label"><span>Upload readiness</span><span id="pub-percent">0%</span></div>
+      <div id="pub-list" class="checklist"></div>
+    </div>
+    <div class="card"><div class="card-title">Quick publishing tips</div><div class="items" style="margin-top:16px">
+      <div class="item"><h3>✦ Strong cover</h3><p>Choose a visually clear frame with an interesting focal point.</p></div>
+      <div class="item"><h3>⌕ Search & discovery</h3><p>Use a clear title and relevant keywords, without stuffing tags.</p></div>
+      <div class="item"><h3>↗ Audience</h3><p>Invite viewers to comment with a question or opinion.</p></div>
+      <div class="item"><h3>◷ Timing</h3><p>Try a consistent schedule and review audience retention.</p></div>
+    </div></div>
+  </section>
+  <footer>SHORTS FACTORY · BUILT FOR CREATORS ✦</footer>
+</main>
+</div>
+<div class="toast" id="toast">Saved!</div>
 <script>
-// Floating particles
-const particleLayer=document.getElementById('particles');
-for(let i=0;i<32;i++){
-  const p=document.createElement('span');
-  p.className='particle';
-  p.style.left=Math.random()*100+'%';
-  p.style.animationDelay=(-Math.random()*12)+'s';
-  p.style.animationDuration=(8+Math.random()*12)+'s';
-  particleLayer.appendChild(p);
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const getVault = () => {try{return JSON.parse(localStorage.getItem('sf-vault')||'[]')}catch{return []}};
+const setVault = v => localStorage.setItem('sf-vault',JSON.stringify(v));
+let scriptCount=0, currentContent=null, publishPlatform='youtube';
+
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2300)}
+function updateStats(){
+  $('#stat-projects').textContent=getVault().length;
+  $('#stat-scripts').textContent=scriptCount;
+  const checks=$$('.pub-check'),done=checks.filter(c=>c.checked).length;
+  $('#stat-tasks').textContent=checks.length?Math.round(done/checks.length*100)+'%':'0%';
 }
+$$('.nav-btn').forEach(btn=>btn.addEventListener('click',()=>{
+  const p=btn.dataset.page;
+  $$('.nav-btn').forEach(b=>b.classList.toggle('active',b===btn));
+  $$('.page').forEach(s=>s.classList.toggle('active',s.id===p));
+  const labels={create:'Create Studio',verify:'Verify Content',vault:'Content Vault',publish:'Publish Center'};
+  $('#crumb').textContent=labels[p];
+  if(p==='vault')renderVault();
+  if(p==='publish')renderPublish();
+  if(p==='verify')updateVerify();
+}));
 
-// Tab switching
-function showTab(id,btn){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  btn.classList.add('active');
+function clean(s){return s.trim()}
+function generate(){
+ const topic=clean($('#topic').value);
+ if(!topic){toast('Enter a topic first ✦');$('#topic').focus();return}
+ const style=$('#style').value,length=Number($('#length').value),platform=$('#platform').value;
+ const title=topic.replace(/^./,c=>c.toUpperCase());
+ const hooks=[
+  `Wait… almost nobody knows this about ${topic}.`,
+  `What if everything you thought about ${topic} was wrong?`,
+  `Here are the details about ${topic} that will blow your mind.`,
+  `Stop scrolling. You need to hear this about ${topic}.`
+ ];
+ const hook=hooks[Math.floor(Math.random()*hooks.length)];
+ const facts=[
+  `First, start with the most surprising fact about ${topic}. Give the audience a detail they would never expect.`,
+  `Next, reveal a lesser-known connection. Build curiosity by explaining why it matters.`,
+  `Finally, end with the biggest reveal. Leave viewers with one memorable idea.`
+ ];
+ const duration=length;
+ const voice=`[0–3s] ${hook}\n\n[3–${Math.round(duration*.35)}s] ${facts[0]}\n\n[${Math.round(duration*.35)}–${Math.round(duration*.7)}s] ${facts[1]}\n\n[${Math.round(duration*.7)}–${duration-3}s] ${facts[2]}\n\n[Last 3s] Which part surprised you most? Follow for more.`;
+ const storyboard=`Scene 1 — HOOK: Fast cinematic opening shot related to ${topic}. Large bold on-screen text. Quick zoom and sound hit.\n\nScene 2 — FACT ONE: Atmospheric footage illustrating ${topic}. Highlight one key phrase on screen.\n\nScene 3 — FACT TWO: Cut to a new angle or location. Add motion graphics and subtle camera movement.\n\nScene 4 — FINAL REVEAL: Dramatic visual payoff. Slow down briefly to let the detail land.\n\nScene 5 — CTA: Clean end frame. Text: “Which fact surprised you?”`;
+ const captions=`${hook}\n\n${title} 👀\n\n${facts.map(f=>f).join('\n\n')}\n\nWhich part surprised you most? Comment below!\n\n#shorts #reels #${topic.toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,20)} #facts`;
+ const prompts=`Vertical 9:16 cinematic footage about ${topic}, ${style.toLowerCase()}, dramatic lighting, photorealistic, detailed atmosphere, slow camera motion, high contrast, no text, optimized for short-form video.`;
+ const ideas=[`The hidden truth about ${topic}`,`5 things you never knew about ${topic}`,`The biggest mystery surrounding ${topic}`];
+ currentContent={title,topic,style,length,platform,hook,voice,storyboard,captions,prompts,ideas,created:Date.now()};
+ scriptCount++;
+ renderOutput(currentContent);
+ updateStats();
 }
-
-// Production prompt
-function createPrompt(){
-  const topic=document.getElementById('topic').value.trim();
-  if(!topic){
-    document.getElementById('status').textContent='⚠ Enter a topic first.';
-    return;
-  }
-
-  const audience=document.getElementById('audience').value.trim()||'general audience';
-  const lang=document.getElementById('lang').value;
-  const length=document.getElementById('length').value;
-  const style=document.getElementById('style').value;
-
-  const prompt=`Act as a professional short-form video production team.
-
-Create a COMPLETE original video production pack for Instagram Reels and YouTube Shorts.
-
-TOPIC: ${topic}
-AUDIENCE: ${audience}
-LANGUAGE: ${lang}
-DURATION: ${length}
-STYLE: ${style}
-FORMAT: Vertical 9:16
-
-OUTPUT:
-
-1. THREE HOOKS
-Write 3 powerful opening hooks. Select the best one.
-
-2. SCRIPT
-Write a timed voiceover script suitable for the chosen duration. Keep pacing natural.
-
-3. STORYBOARD
-Divide the video into scenes with timestamps.
-
-4. VISUALS
-Provide detailed visual prompts for every scene.
-
-5. SUBTITLES
-Write short readable on-screen subtitles timed to scenes.
-
-6. EDITING
-Specify transitions, camera motion, sound design and pacing.
-
-7. SOCIAL PACK
-Provide YouTube title, Instagram caption, and relevant hashtags.
-
-8. FACT CHECK
-List factual claims and what sources are needed to verify them.
-
-9. FINAL QUALITY CHECK
-Review originality, pacing, clarity, factual accuracy, and potential copyright issues.
-
-Be creative, engaging, factual, and avoid filler. Never claim to have created or published an actual video.`;
-
-  document.getElementById('createOutput').value=prompt;
-  document.getElementById('status').textContent='✨ Production prompt created successfully!';
+function renderOutput(c){
+ const sections=[['VIDEO TITLE',c.title],['HOOK',c.hook],['VOICEOVER SCRIPT',c.voice],['STORYBOARD',c.storyboard],['CAPTION & HASHTAGS',c.captions],['VISUAL PROMPT',c.prompts],['MORE VIDEO IDEAS',c.ideas.join('\n• ')]];
+ $('#output').innerHTML=sections.map(([title,content])=>`<div class="output-section"><h3>${title}</h3><p>${escapeHtml(content)}</p><button class="btn btn-small copy" data-copy="${encodeURIComponent(content)}">Copy text</button></div>`).join('')+`<button class="btn btn-primary" id="save-project">▣ Save project to Vault</button>`;
+ $('#output').classList.add('show');
+ $$('.copy').forEach(b=>b.onclick=()=>copyText(decodeURIComponent(b.dataset.copy)));
+ $('#save-project').onclick=()=>saveProject(c);
 }
-
-// Verification prompt
-function verifyPrompt(){
-  const content=document.getElementById('reviewInput').value.trim();
-  if(!content){
-    document.getElementById('status').textContent='⚠ Paste your content to review first.';
-    return;
-  }
-
-  document.getElementById('verifyOutput').value=`Act as a strict quality-control reviewer for a short-form video.
-
-REVIEW MATERIAL:
-${content}
-
-Evaluate:
-• Hook strength in the first 1–3 seconds
-• Duration and narration pacing
-• Spelling, grammar and subtitle clarity
-• Fact-checking requirements
-• Scene continuity and relevance
-• Copyright and media licensing risks
-• Audio and editing quality (only if information is provided)
-• Suitability for Instagram Reels and YouTube Shorts
-
-Give:
-1. Score out of 10
-2. Critical problems
-3. Suggested fixes
-4. Claims that need reliable sources
-5. A clear verdict: APPROVE, NEEDS EDITS, or REJECT
-
-Be strict and honest. Do not claim to inspect footage or hear audio unless supplied.`;
-
-  document.getElementById('status').textContent='🔍 Review prompt ready!';
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+async function copyText(t){try{await navigator.clipboard.writeText(t);toast('Copied to clipboard ✓')}catch{toast('Copy not available in this browser')}}
+function saveProject(c){
+ const v=getVault();v.unshift({...c,id:Date.now()});setVault(v);updateStats();toast('Project saved to your Vault ✦');
 }
-
-// Copy helper
-function copyText(id){
-  const field=document.getElementById(id);
-  if(!field.value.trim()){
-    document.getElementById('status').textContent='⚠ Generate the prompt first.';
-    return;
-  }
-  field.select();
-  try{
-    const success=document.execCommand('copy');
-    document.getElementById('status').textContent=success?'📋 Copied! Paste it into ChatGPT.':'Select the text and copy it manually.';
-  }catch(e){
-    document.getElementById('status').textContent='Select the text and copy it manually.';
-  }
+function renderVault(){
+ const v=getVault();$('#vault-count').textContent=v.length;
+ const el=$('#vault-list');
+ if(!v.length){el.innerHTML='<div class="empty" style="grid-column:1/-1"><div class="empty-icon">▣</div>Your vault is empty. Create a project and save it here.</div>';return}
+ el.innerHTML=v.map(p=>`<div class="item"><h3>${escapeHtml(p.title||p.topic)}</h3><p>${escapeHtml(p.style||'')} · ${p.length||30}s · ${new Date(p.created).toLocaleDateString()}</p><div class="item-actions"><button class="btn btn-small load" data-id="${p.id}">Load project</button><button class="btn btn-small del" data-id="${p.id}">Delete</button></div></div>`).join('');
+ $$('.load').forEach(b=>b.onclick=()=>{const p=getVault().find(x=>x.id==b.dataset.id);if(!p)return;currentContent=p;$('#topic').value=p.topic;$('#style').value=p.style;$('#length').value=p.length;$('#platform').value=p.platform;renderOutput(p);$$('.nav-btn').forEach(x=>x.classList.toggle('active',x.dataset.page==='create'));$$('.page').forEach(x=>x.classList.toggle('active',x.id==='create'));$('#crumb').textContent='Create Studio';toast('Project loaded ✦')});
+ $$('.del').forEach(b=>b.onclick=()=>{setVault(getVault().filter(x=>x.id!=b.dataset.id));renderVault();updateStats();toast('Project deleted')});
 }
-
-function openChat(){
-  window.open('https://chatgpt.com','_blank');
+const youtubeTasks=['Video is vertical (9:16)','Video is within Shorts duration limits','Title is clear and searchable','Description and hashtags added','Thumbnail / cover frame selected','Audience and visibility settings checked','Copyright and music checked','Upload preview watched','Video published or scheduled'];
+const instagramTasks=['Video is vertical (9:16)','Video length and format checked','Caption written with relevant hashtags','Cover image selected','Tagged people or location (if relevant)','Account and audience settings checked','Audio rights and permissions checked','Preview watched before posting','Reel published or scheduled'];
+function renderPublish(){
+ const tasks=publishPlatform==='youtube'?youtubeTasks:instagramTasks;
+ const list=$('#pub-list');list.innerHTML=tasks.map(t=>`<label class="check-row"><input type="checkbox" class="pub-check"><div>${t}</div></label>`).join('');
+ $$('.pub-check').forEach(c=>c.onchange=updatePublish);
+ updatePublish();
 }
-
-// Checklist progress
-function updateProgress(){
-  const checks=document.querySelectorAll('#publish input[type="checkbox"]');
-  const done=[...checks].filter(c=>c.checked).length;
-  document.getElementById('progress').style.width=(done/checks.length*100)+'%';
-  document.getElementById('progressText').textContent=done+' of '+checks.length+' complete';
-  if(done===checks.length){
-    document.getElementById('status').textContent='🎉 Checklist complete! Ready for your final review.';
-  }
+function updatePublish(){
+ const c=$$('.pub-check'),done=c.filter(x=>x.checked).length,p=Math.round(done/(c.length||1)*100);
+ $('#pub-bar').style.width=p+'%';$('#pub-percent').textContent=p+'%';updateStats();
 }
-function resetChecklist(){
-  document.querySelectorAll('#publish input[type="checkbox"]').forEach(c=>c.checked=false);
-  updateProgress();
-  document.getElementById('status').textContent='Checklist reset.';
+function updateVerify(){
+ const c=$$('.verify-check'),done=c.filter(x=>x.checked).length,p=Math.round(done/c.length*100);
+ $('#verify-bar').style.width=p+'%';$('#verify-percent').textContent=p+'%';
 }
+$$('.verify-check').forEach(c=>c.onchange=updateVerify);
+$$('.platform').forEach(b=>b.onclick=()=>{publishPlatform=b.dataset.platform;$$('.platform').forEach(x=>x.classList.toggle('active',x===b));renderPublish()});
+$('#generate').onclick=generate;
+$('#clear-form').onclick=()=>{$('#topic').value='';$('#output').classList.remove('show');currentContent=null;toast('Ready for a new idea')};
+renderPublish();renderVault();updateVerify();updateStats();
 </script>
 </body>
 </html>
