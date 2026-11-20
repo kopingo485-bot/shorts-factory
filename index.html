@@ -1,150 +1,211 @@
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Shorts Factory</title>
 <style>
-body {
-  background:#10131c;
-  color:#f4f4f4;
-  font-family:Arial,sans-serif;
-  padding:24px;
-  max-width:800px;
-  margin:auto;
-}
-main {
-  background:#1b2130;
-  padding:24px;
-  border-radius:18px;
-}
-input,select,button,textarea {
-  width:100%;
-  padding:12px;
-  margin:9px 0;
-  border-radius:9px;
-  border:1px solid #41495b;
-  box-sizing:border-box;
-  font-size:16px;
-}
-input,select,textarea {
-  background:#101622;
-  color:white;
-}
-button {
-  background:#6c63ff;
-  color:white;
-  font-weight:bold;
-  border:0;
-  cursor:pointer;
-}
-button:hover {opacity:.85}
-textarea {min-height:200px}
-.small {color:#aab3c5}
+*{box-sizing:border-box}
+body{margin:0;background:#10131c;color:#f4f4f4;font-family:Arial,sans-serif;padding:20px}
+main{max-width:850px;margin:auto;background:#1b2130;padding:24px;border-radius:18px}
+h1{margin-top:0}
+p{color:#b9c2d4}
+label{display:block;margin-top:12px}
+input,select,textarea,button{width:100%;padding:12px;margin-top:8px;border-radius:9px;border:1px solid #41495b;font-size:15px}
+input,select,textarea{background:#101622;color:white}
+button{background:#6c63ff;color:white;font-weight:bold;border:0;cursor:pointer}
+button:hover{opacity:.88}
+textarea{min-height:240px;resize:vertical}
+.tabs{display:flex;gap:8px;margin:18px 0}
+.tabs button{flex:1;background:#30394c}
+.tabs button.active{background:#6c63ff}
+.panel{display:none}
+.panel.active{display:block}
+.card{background:#101622;border:1px solid #41495b;border-radius:12px;padding:16px;margin-top:14px}
+.small{font-size:13px;color:#aab3c5}
+.check{display:flex;align-items:flex-start;gap:10px;margin:14px 0}
+.check input{width:auto;margin:2px 0}
+.check label{margin:0}
 </style>
 </head>
 <body>
 <main>
 <h1>🎬 Shorts Factory</h1>
-<p class="small">Free AI short-form content prompt builder</p>
+<p>Free browser-based short video production workspace</p>
+
+<div class="tabs">
+<button class="active" onclick="showTab('create',this)">1. Create</button>
+<button onclick="showTab('verify',this)">2. Verify</button>
+<button onclick="showTab('publish',this)">3. Publish</button>
+</div>
+
+<section id="create" class="panel active">
+<div class="card">
+<h2>🧠 Content Generator</h2>
 
 <label>Topic / niche</label>
-<input id="topic" placeholder="e.g. strange facts about the ocean">
+<input id="topic" placeholder="5 mysterious facts about the ocean">
 
 <label>Target audience</label>
-<input id="audience" placeholder="e.g. curious teens and adults">
+<input id="audience" placeholder="Curious people aged 16–30">
 
-<label>Video language</label>
+<label>Language</label>
 <select id="lang">
-<option>English</option>
-<option>French</option>
-<option>Arabic</option>
+<option>English</option><option>French</option><option>Arabic</option>
 </select>
 
 <label>Video length</label>
 <select id="length">
-<option>30 seconds</option>
-<option>45 seconds</option>
-<option>60 seconds</option>
+<option>30 seconds</option><option>45 seconds</option><option>60 seconds</option>
 </select>
 
 <label>Style</label>
 <select id="style">
 <option>Faceless documentary</option>
+<option>Mysterious</option>
 <option>Fast-paced facts</option>
 <option>Storytelling</option>
 <option>Motivational</option>
-<option>Mysterious</option>
 </select>
 
-<button onclick="buildPrompt()">Generate content prompt</button>
+<button onclick="createPrompt()">Generate Production Prompt</button>
+</div>
 
-<label>Your ready-to-copy AI prompt</label>
-<textarea id="output" placeholder="Your prompt will appear here..."></textarea>
+<div class="card">
+<h3>Your prompt</h3>
+<textarea id="createOutput" placeholder="Your production prompt will appear here..."></textarea>
+<button onclick="copyText('createOutput')">📋 Copy Prompt</button>
+<button onclick="openChat()">Open ChatGPT</button>
+</div>
+</section>
 
-<button onclick="copyPrompt()">Copy prompt</button>
-<button onclick="openChatGPT()">Open ChatGPT</button>
+<section id="verify" class="panel">
+<div class="card">
+<h2>🔍 Video Quality Checker</h2>
+<p>Paste your script or describe your finished video. This creates a review prompt for ChatGPT.</p>
+<label>Paste script, captions, or video description</label>
+<textarea id="reviewInput" placeholder="Paste your script here..."></textarea>
+<button onclick="verifyPrompt()">Generate Verification Prompt</button>
+</div>
+<div class="card">
+<h3>Review prompt</h3>
+<textarea id="verifyOutput" placeholder="Your verification prompt will appear here..."></textarea>
+<button onclick="copyText('verifyOutput')">📋 Copy Review Prompt</button>
+<button onclick="openChat()">Open ChatGPT</button>
+</div>
+</section>
 
-<p id="status" class="small"></p>
+<section id="publish" class="panel">
+<div class="card">
+<h2>🚀 Publishing Checklist</h2>
+<p>Check every item before uploading. Checklist resets if you refresh.</<div class="check"><input type="checkbox" id="c1"><label for="c1">Video is vertical (9:16)</label></div>
+<div class="check"><input type="checkbox" id="c2"><label for="c2">Video duration is correct</label></div>
+<div class="check"><input type="checkbox" id="c3"><label for="c3">Spelling and subtitles checked</label></div>
+<div class="check"><input type="checkbox" id="c4"><label for="c4">Facts verified against reliable sources</label></div>
+<div class="check"><input type="checkbox" id="c5"><label for="c5">Music and visuals are safe to use</label></div>
+<div class="check"><input type="checkbox" id="c6"><label for="c6">Voiceover and audio levels checked</label></div>
+<div class="check"><input type="checkbox" id="c7"><label for="c7">Caption, title and hashtags prepared</label></div>
+<div class="check"><input type="checkbox" id="c8"><label for="c8">Watched the final video from beginning to end</label></div>
+<div class="check"><input type="checkbox" id="c9"><label for="c9">Video approved for publishing</label></div>
+<p class="small">Only publish after you personally review the finished video.</p>
+<button onclick="resetChecklist()">Reset checklist</button>
+</div>
+</section>
+
+<p class="small" id="status"></p>
 </main>
 
 <script>
-function buildPrompt() {
-  const topic = document.getElementById('topic').value.trim();
-  const audience = document.getElementById('audience').value.trim() || 'general audience';
-  const lang = document.getElementById('lang').value;
-  const length = document.getElementById('length').value;
-  const style = document.getElementById('style').value;
+function showTab(id,btn){
+ document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+ document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+ document.getElementById(id).classList.add('active');
+ btn.classList.add('active');
+}
 
-  if (!topic) {
-    document.getElementById('status').textContent = 'Enter a topic first!';
-    return;
-  }
+function createPrompt(){
+ const topic=document.getElementById('topic').value.trim();
+ if(!topic){document.getElementById('status').textContent='Enter a topic first.';return;}
+ const audience=document.getElementById('audience').value||'general audience';
+ const lang=document.getElementById('lang').value;
+ const length=document.getElementById('length').value;
+ const style=document.getElementById('style').value;
 
-  const prompt = `Act as an expert short-form video creator.
+ document.getElementById('createOutput').value=
+`Act as an expert short-form documentary video producer.
 
-Create an original ${length} vertical video for Instagram Reels and YouTube Shorts.
+Create a complete original video production pack for YouTube Shorts and Instagram Reels.
 
 TOPIC: ${topic}
 AUDIENCE: ${audience}
 LANGUAGE: ${lang}
+DURATION: ${length}
 STYLE: ${style}
+FORMAT: Vertical 9:16
 
-Return:
-1. Three possible hooks
-2. The strongest hook selected
-3. A complete voiceover script timed for ${length}
-4. A scene-by-scene storyboard
-5. Visual generation prompts for each scene
-6. On-screen subtitles
-7. Editing instructions
-8. A YouTube Shorts title
-9. An Instagram caption
-10. Relevant hashtags
-11. A factual and copyright quality-check list
+DELIVER:
+1. Three hook options and select the strongest.
+2. A timed voiceover script matching the duration.
+3. Scene-by-scene storyboard with timestamps.
+4. Visual instructions for each scene.
+5. AI image/video prompts for each scene.
+6. On-screen subtitles, synchronized to narration.
+7. Editing instructions, pacing, transitions and sound effects.
+8. YouTube title and Instagram caption.
+9. Relevant hashtags.
+10. List factual claims that need checking with sources.
+11. A final production checklist.
 
-Keep it engaging, original, accurate, and suitable for vertical 9:16 video.
-Do not invent facts. Flag claims that need verification.
-Do not claim a video has been generated or posted.`;
-
-  document.getElementById('output').value = prompt;
-  document.getElementById('status').textContent = 'Prompt ready! Copy it into ChatGPT.';
+Make it engaging and original. Avoid filler, fake facts, copied scripts, and unlicensed media. Keep the script realistic for the requested duration. Do not claim to have created an actual video file.`;
+ document.getElementById('status').textContent='Production prompt generated!';
 }
 
-function copyPrompt() {
-  const text = document.getElementById('output').value;
-  if (!text) {
-    document.getElementById('status').textContent = 'Generate a prompt first.';
-    return;
-  }
-  navigator.clipboard.writeText(text)
-    .then(() => document.getElementById('status').textContent = 'Copied! Now paste it into ChatGPT.')
-    .catch(() => document.getElementById('status').textContent = 'Select the text and copy it manually.');
+function verifyPrompt(){
+ const content=document.getElementById('reviewInput').value.trim();
+ if(!content){document.getElementById('status').textContent='Paste a script or video description first.';return;}
+ document.getElementById('verifyOutput').value=
+`Act as a strict quality-control editor for an Instagram Reel / YouTube Short.
+
+Review the following content:
+---
+${content}
+---
+
+Check:
+1. Hook strength in the first 2 seconds.
+2. Timing and whether it fits the requested duration.
+3. Grammar, spelling and subtitle clarity.
+4. Factual claims that require verification.
+5. Visual scene continuity and relevance.
+6. Copyright and licensing risks (flag risks, do not guarantee clearance).
+7. Audio and pacing recommendations.
+8. Platform suitability.
+9. Potential misleading content or safety issues.
+
+Give:
+- A score out of 10.
+- Problems grouped by severity.
+- Specific corrections.
+- A final verdict: APPROVE, NEEDS EDITS, or REJECT.
+
+Be honest. Do not claim to have watched footage or heard audio unless it was actually provided.`;
+ document.getElementById('status').textContent='Verification prompt generated!';
 }
 
-function openChatGPT() {
-  window.open('https://chatgpt.com', '_blank');
+function copyText(id){
+ const text=document.getElementById(id).value;
+ if(!text){document.getElementById('status').textContent='Generate the prompt first.';return;}
+ navigator.clipboard.writeText(text)
+ .then(()=>document.getElementById('status').textContent='Copied! Paste it into ChatGPT.')
+ .catch(()=>{document.getElementById(id).select();document.getElementById('status').textContent='Select the text and copy manually.';});
+}
+function openChat(){window.open('https://chatgpt.com','_blank');}
+function resetChecklist(){
+ document.querySelectorAll('#publish input[type=checkbox]').forEach(c=>c.checked=false);
+ document.getElementById('status').textContent='Checklist reset.';
 }
 </script>
 </body>
